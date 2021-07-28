@@ -4,6 +4,7 @@ import {TaskType, Todolist} from './Todolist';
 import {v1} from 'uuid';
 import {AddItemForm} from "./components/AddItemForm";
 
+
 export type FilterValuesType = "all" | "active" | "completed";
 type TodolistType = {
     id: string
@@ -68,6 +69,25 @@ function App() {
             setTasks({...tasks});
         }
     }
+    const updateTasks=(todolistId:string,id:string,title:string)=>{
+        const currentTask=tasks[todolistId];
+        if (currentTask){
+            let editableTask=currentTask.find(f=>f.id===id);
+            if (editableTask) {
+                editableTask.title = title
+            }
+            setTasks({...tasks})
+        }
+    }
+    const updateTodolist=(todolistId:string,id:string,title:string)=>{
+        let currentTodolist=todolists.find(t=>t.id===todolistId);
+        if (currentTodolist){
+            currentTodolist.title=title
+            setTodolists([...todolists])
+        }
+    }
+
+
 
     function changeFilter(value: FilterValuesType, todolistId: string) {
         let todolist = todolists.find(tl => tl.id === todolistId);
@@ -86,48 +106,46 @@ function App() {
         setTasks({...tasks});
     }
 
-    const addTodoLists = (title: string) => {
-        const newId = v1()
-        const newTodoLists: TodolistType = {id: newId, title: title, filter: "all"}
-        setTodolists([newTodoLists, ...todolists])
-        setTasks({...tasks, [newId]: []})
+    function addTodolist(title:string) {
+        let newTodolistId=v1();
+        let newTodolist:TodolistType={id:newTodolistId,title:title,filter:'all'};
+        setTodolists([newTodolist,...todolists]);
+        setTasks({...tasks, [newTodolistId]:[]})
     }
+    return (
+        <div className="App">
+            <AddItemForm addItem={addTodolist} id={'hhh'}/>
+            {
+                todolists.map(tl => {
+                    let allTodolistTasks = tasks[tl.id];
+                    let tasksForTodolist = allTodolistTasks;
 
+                    if (tl.filter === "active") {
+                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
+                    }
+                    if (tl.filter === "completed") {
+                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
+                    }
 
+                    return <Todolist
+                        key={tl.id}
+                        id={tl.id}
+                        title={tl.title}
+                        tasks={tasksForTodolist}
+                        removeTask={removeTask}
+                        changeFilter={changeFilter}
+                        addTask={addTask}
+                        changeTaskStatus={changeStatus}
+                        filter={tl.filter}
+                        removeTodolist={removeTodolist}
+                        updateTasks={updateTasks}
+                        updateTodolist={updateTodolist}
+                    />
+                })
+            }
 
-return (
-    <div className="App">
-        <AddItemForm addItem={addTodoLists} todolistId={'12'}/>
-        {
-            todolists.map(tl => {
-                let allTodolistTasks = tasks[tl.id];
-                let tasksForTodolist = allTodolistTasks;
-
-                if (tl.filter === "active") {
-                    tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
-                }
-                if (tl.filter === "completed") {
-                    tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
-                }
-
-                return <Todolist
-                    key={tl.id}
-                    id={tl.id}
-                    title={tl.title}
-                    tasks={tasksForTodolist}
-                    removeTask={removeTask}
-                    changeFilter={changeFilter}
-                    addTask={addTask}
-                    changeTaskStatus={changeStatus}
-                    filter={tl.filter}
-                    removeTodolist={removeTodolist}
-
-                />
-            })
-        }
-
-    </div>
-);
+        </div>
+    );
 }
 
 export default App;
