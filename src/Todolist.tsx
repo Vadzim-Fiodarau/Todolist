@@ -1,9 +1,10 @@
 import React, {ChangeEvent} from 'react';
 import {FilterValuesType} from './App';
-import {AddItemForm} from './AddItemForm';
-import {EditableSpan} from './EditableSpan';
+
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
+import {EditableSpan} from "./components/EditableSpan";
+import {AddItemForm} from "./components/AddItemForm";
 
 
 export type TaskType = {
@@ -54,7 +55,7 @@ export function Todolist(props: PropsType) {
             </IconButton>
 
         </h3>
-        <AddItemForm addItem={addTask}/>
+        <AddItemForm callBack={addTask}/>
         <ul>
             {
                 props.tasks.map(t => {

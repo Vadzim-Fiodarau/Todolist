@@ -1,31 +1,27 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useState} from 'react';
 
-
-type propsType = {
-    title: string
-    updateTasks:(todolistId:string,id:string,title:string)=>void
-    todolistId:string
-    id:string
+type EditableSpanPropsType = {
+    value: string
+    onChange: (newValue: string) => void
 }
 
-export const EditableSpan = (props: propsType) => {
+export function EditableSpan(props: EditableSpanPropsType) {
+    let [editMode, setEditMode] = useState(false);
+    let [title, setTitle] = useState(props.value);
 
-    let [title, setTitle] = useState(props.title)
-    const onChangeHandler=(event:ChangeEvent<HTMLInputElement>)=>{
-        setTitle(event.currentTarget.value);
-        console.log()
+    const activateEditMode = () => {
+        setEditMode(true);
+        setTitle(props.value);
     }
-    let [edit, setEdit] = useState(false)
-    const onDoubleClickHandler=()=>{
-        setEdit(true)
+    const activateViewMode = () => {
+        setEditMode(false);
+        props.onChange(title);
     }
-    const onBlurHandler=()=>{
-        setEdit(false)
-        props.updateTasks(props.todolistId, props.id, title)
+    const changeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.currentTarget.value)
     }
-    return (
-        edit
-            ? <input value={title} onChange={onChangeHandler} onBlur={onBlurHandler} autoFocus={true} />
-            : <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>
-    )
+
+    return editMode
+        ? <input value={title} onChange={changeTitle} autoFocus onBlur={activateViewMode}/>
+        : <span onDoubleClick={activateEditMode}>{props.value}</span>
 }

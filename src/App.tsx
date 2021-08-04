@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from './Todolist';
 import {v1} from 'uuid';
-import {AddItemForm} from './AddItemForm';
+
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
+import {AddItemForm} from "./components/AddItemForm";
 
 
 
@@ -115,6 +116,7 @@ function App() {
     function addTodolist(title: string) {
         let newTodolistId = v1();
         let newTodolist: TodolistType = {id: newTodolistId, title: title, filter: 'all'};
+
         setTodolists([newTodolist, ...todolists]);
         setTasks({
             ...tasks,
@@ -139,7 +141,14 @@ function App() {
             </AppBar>
 
             <Container fixed>
-                <div className={'AddItemFormStyle'}><AddItemForm addItem={addTodolist}/></div>
+
+                {/*const [dispValue, setDispValue] = useState<string | number>('')*/}
+
+                <div className={'AddItemFormStyle'}>
+                    <h3>Add new todolist</h3>
+                    <AddItemForm callBack={addTodolist}/>
+                </div>
+                
                 <Grid container spacing={5}>
                     {
                         todolists.map(tl => {
